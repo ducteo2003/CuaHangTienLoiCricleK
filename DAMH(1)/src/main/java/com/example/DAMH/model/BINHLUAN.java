@@ -2,6 +2,7 @@ package com.example.DAMH.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 @Data
@@ -14,10 +15,10 @@ public class BINHLUAN {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int maBinhLuan;
     private String noiDung;
-    private Date ngayBinhLuan;
-    private byte trangThai; //trạng thái có 3 giá trị: 1.chờ duyệt 2.đã duyệt 3.từ chối
+    private DateTimeFormatter ngayBinhLuan;
+    private boolean trangThai; //trạng thái có 2 giá trị: 1.đã duyệt 2.từ chối
 
     @OneToOne
-    @JoinColumn(name ="maHD")
+    @JoinColumn(name = "maHD")
     private HOADON hoadon;
 }

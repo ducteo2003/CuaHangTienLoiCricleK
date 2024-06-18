@@ -9,16 +9,18 @@ import lombok.*;
 @Entity
 @Table(name = "chitiethoadon")
 public class CHITIETHOADON {
+    @EmbeddedId
+    private CHITIETDATHANGKey maCTHD;
     private int soLuongMua;
     private double giaMua; //donGia*35%
     private double tongHoaDon;
 
-    @EmbeddedId
+
     @ManyToOne
     @JoinColumn (name ="barcode")
     private SANPHAM sanpham;
 
-    @EmbeddedId
+
     @ManyToOne
     @JoinColumn(name ="maHD")
     private HOADON hoadon;

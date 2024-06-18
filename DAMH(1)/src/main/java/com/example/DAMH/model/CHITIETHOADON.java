@@ -9,8 +9,9 @@ import lombok.*;
 @Entity
 @Table(name = "chitiethoadon")
 public class CHITIETHOADON {
-    @EmbeddedId
-    private CHITIETDATHANGKey maCTHD;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public int maCTHD;
     private int soLuongMua;
     private double giaMua; //donGia*35%
     private double tongHoaDon;

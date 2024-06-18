@@ -1,6 +1,7 @@
 package com.example.DAMH.model;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -15,7 +16,7 @@ public class BINHLUAN {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int maBinhLuan;
     private String noiDung;
-    private DateTimeFormatter ngayBinhLuan;
+    private Date ngayBinhLuan;
     private boolean trangThai; //trạng thái có 2 giá trị: 1.đã duyệt 2.từ chối
 
     @OneToOne

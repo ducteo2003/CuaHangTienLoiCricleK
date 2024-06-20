@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách sản phẩm</title>
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+         .container {
+        display: flex;
+        width: 100%;
+        height: 100vh;
+    }
+
+    .sidebar {
+        flex: 0.8;
+        background-color: #cce5ff;
+        padding: 20px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        position: relative;
+        border-radius: 15px;
+    }
+
+    .sidebar.collapsed {
+        flex: 0;
+        padding: 20px 0;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+    }
+
+    .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .sidebar li {
+        background-color: #ceb7f8;
+        margin: 10px 0;
+        padding: 10px;
+        cursor: pointer;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+    .toggle-icon {
+        position: absolute;
+        top: 10px;
+        left: 100%;
+        transform: translateX(-50%);
+        cursor: pointer;
+        font-size: 20px;
+        color: #8bc34a;
+        background-color: #fff;
+        border-radius: 50%;
+        padding: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .sidebar.collapsed .toggle-icon {
+        left: 0;
+        transform: translateX(-50%);
+    }
+
+    .content {
+        flex: 2.5;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content .search-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .content .search-bar input {
+        width: 80%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+    }
+
+    .content .search-bar button {
+        padding: 10px 20px;
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .table-container {
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #cce5ff;
+    }
+
+    .currency {
+        text-align: right;
+    }
+
+    .invoice {
+        flex: 1;
+        background-color: #cce5ff;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: stretch; /* Ensure child elements stretch */
+        border-radius: 15px;
+    }
+
+    .invoice h2 {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .invoice ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .invoice li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #d1c4e9;
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .invoice li .delete-icon {
+        margin-left: 10px;
+        cursor: pointer;
+        color: red;
+    }
+
+    .invoice .total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ffeb3b70;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .invoice .checkout {
+        display: flex;
+        justify-content: center;
+    }
+
+    .invoice .checkout button {
+        padding: 10px 20px;
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar for categories -->
+    <div class="sidebar" id="sidebar">
+        <i class="fas fa-bars toggle-icon" onclick="toggleSidebar()"></i>
+        <h2>Loại sản phẩm</h2>
+        <ul>
+            <li th:each="loaiSP : ${loaisps}" th:text="${loaiSP.tenLoai}"
+                th:onclick="'window.location.href=\'/nhanvien?categoryId=' + ${loaiSP.maLoai} + '\''">
+            </li>
+            <!-- Add more categories as needed -->
+        </ul>
+    </div>
+    <!-- Main content area -->
+    <div class="content">
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" placeholder="Nhập thông tin sản phẩm hoặc mã sản phẩm cần tìm kiếm">
+            <button>Tìm kiếm</button>
+        </div>
+
+        <!-- Product table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Mã sản phẩm</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Đơn vị tính</th>
+                    <th>Đơn giá</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sanPham : ${sanphams}" onclick="toggleSelect(this)">
+                    <td th:text="${sanPham.barcode}">Mã sản phẩm</td>
+                    <td th:text="${sanPham.tenSP}">Tên sản phẩm</td>
+                    <td th:text="${sanPham.donViTinh}">Đơn vị tính</td>
+                    <td class="currency" th:text="${sanPham.donGia}">Đơn giá</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Invoice area -->
+    <div class="invoice">
+        <h2>Hóa đơn</h2>
+        <ul id="invoice-list">
+            <!-- Invoice items will be dynamically added here -->
+        </ul>
+        <div class="total">
+            <span>Tổng cộng:</span>
+            <span id="total-amount">0 </span>
+        </div>
+        <div class="checkout">
+            <button>Thanh toán</button>
+        </div>
+    </div>
+</div>
+<script>
+    let invoiceItems = [];
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
+    function toggleSelect(row) {
+        const barcode = row.cells[0].innerText;
+        const itemName = row.cells[1].innerText;
+        const itemPrice = parseFloat(row.cells[3].innerText.replace(/[^\d.-]/g, '')).toFixed(0); // Ensure the price is formatted without decimals
+
+        let item = invoiceItems.find(i => i.barcode === barcode);
+
+        if (item) {
+            item.quantity++;
+        } else {
+            invoiceItems.push({ barcode, itemName, itemPrice, quantity: 1 });
+        }
+
+        updateInvoice();
+    }
+
+    function removeItem(barcode) {
+        invoiceItems = invoiceItems.filter(item => item.barcode !== barcode);
+        updateInvoice();
+    }
+
+    function updateInvoice() {
+        const invoiceList = document.getElementById('invoice-list');
+        const totalAmount = document.getElementById('total-amount');
+        let total = 0;
+
+        invoiceList.innerHTML = '';
+
+        invoiceItems.forEach(item => {
+            const itemTotalPrice = parseFloat(item.itemPrice) * item.quantity;
+            total += itemTotalPrice;
+
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `${item.itemName} - Số lượng: ${item.quantity} - Giá: ${itemTotalPrice.toLocaleString()}
+                <i class="fas fa-trash-alt delete-icon" onclick="removeItem('${item.barcode}')"></i>`;
+            invoiceList.appendChild(listItem);
+        });
+
+        totalAmount.textContent = total.toLocaleString();
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const currencyElements = document.querySelectorAll(".currency");
+        currencyElements.forEach(function(element) {
+            const value = parseFloat(element.textContent.replace(/[^\d.-]/g, '')).toFixed(0); // Ensure the price is formatted without decimals
+            if (!isNaN(value)) {
+                element.textContent = value.toLocaleString();
+            }
+        });
+    });
+</script>
+</body>
+</html>

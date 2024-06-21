@@ -63,4 +63,12 @@ public class SANPHAMService {
     public List<SANPHAM> findSANPHAMByLOAISP(Integer maLoai) {
         return sanPhamRepository.findByLoaispMaLoai(maLoai);
     }
+
+    public List<SANPHAM> searchSanPhamByTenSP(String tenSP) {
+        return sanPhamRepository.findByTenSPContaining(tenSP);
+    }
+
+    public List<SANPHAM> searchSanPhamByBarcode(Integer barcode) {
+        return sanPhamRepository.findByBarcode(barcode);
+    }
 }

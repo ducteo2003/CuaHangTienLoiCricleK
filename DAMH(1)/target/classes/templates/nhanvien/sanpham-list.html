@@ -155,6 +155,7 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
+            overflow-y: auto; /* Add a scrollbar to the invoice list */
         }
 
         .invoice li {
@@ -166,8 +167,26 @@
             border-radius: 8px;
         }
 
+        .invoice .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .invoice .item-details div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .invoice .item-details input[type="number"] {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
         .invoice li .delete-icon {
-            margin-left: 10px;
             cursor: pointer;
             color: red;
         }
@@ -208,7 +227,6 @@
             <li th:each="loaiSP : ${loaisps}" th:text="${loaiSP.tenLoai}"
                 th:onclick="'window.location.href=\'/nhanvien?categoryId=' + ${loaiSP.maLoai} + '\''">
             </li>
-
         </ul>
     </div>
 
@@ -216,8 +234,8 @@
     <div class="content">
         <!-- Search bar -->
         <div class="search-bar">
-            <input type="text" placeholder="Nhập thông tin sản phẩm hoặc mã sản phẩm cần tìm kiếm">
-            <button>Tìm kiếm</button>
+            <input type="text" id="search-input" placeholder="Nhập thông tin sản phẩm hoặc mã sản phẩm cần tìm kiếm" oninput="searchProduct()">
+            <button onclick="searchProduct()">Tìm kiếm</button>
         </div>
 
         <!-- Product table -->
@@ -231,7 +249,7 @@
                     <th>Đơn giá</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="product-list">
                 <tr th:each="sanPham : ${sanphams}" onclick="toggleSelect(this)">
                     <td th:text="${sanPham.barcode}">Mã sản phẩm</td>
                     <td th:text="${sanPham.tenSP}">Tên sản phẩm</td>
@@ -251,7 +269,7 @@
         </ul>
         <div class="total">
             <span>Tổng cộng:</span>
-            <span id="total-amount">0 </span>
+            <span id="total-amount">0</span>
         </div>
         <div class="checkout">
             <button>Thanh toán</button>
@@ -282,6 +300,14 @@
         updateInvoice();
     }
 
+    function updateQuantity(barcode, quantity) {
+        let item = invoiceItems.find(i => i.barcode === barcode);
+        if (item) {
+            item.quantity = parseInt(quantity);
+            updateInvoice();
+        }
+    }
+
     function removeItem(barcode) {
         invoiceItems = invoiceItems.filter(item => item.barcode !== barcode);
         updateInvoice();
@@ -299,8 +325,16 @@
             total += itemTotalPrice;
 
             const listItem = document.createElement('li');
-            listItem.innerHTML = `${item.itemName} - Số lượng: ${item.quantity} - Giá: ${itemTotalPrice.toLocaleString()}
-                <i class="fas fa-trash-alt delete-icon" onclick="removeItem('${item.barcode}')"></i>`;
+            listItem.innerHTML = `
+                <div class="item-details">
+                    <div>${item.itemName}</div>
+                    <div>
+                        <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity('${item.barcode}', this.value)">
+                    </div>
+                    <div>- Giá: ${itemTotalPrice.toLocaleString()}</div>
+                    <div><i class="fas fa-trash-alt delete-icon" onclick="removeItem('${item.barcode}')"></i></div>
+                </div>
+            `;
             invoiceList.appendChild(listItem);
         });
 
@@ -310,6 +344,22 @@
 
     function showAllProducts() {
         window.location.href = '/nhanvien';
+    }
+
+    function searchProduct() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const rows = document.querySelectorAll('#product-list tr');
+
+        rows.forEach(row => {
+            const barcode = row.cells[0].innerText.toLowerCase();
+            const itemName = row.cells[1].innerText.toLowerCase();
+
+            if (barcode.includes(query) || itemName.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
     }
 
     document.addEventListener("DOMContentLoaded", function() {

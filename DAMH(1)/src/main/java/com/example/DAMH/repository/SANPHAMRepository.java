@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface SANPHAMRepository extends JpaRepository<SANPHAM, Integer> {
     List<SANPHAM> findByLoaispMaLoai(Integer maLoai);
+    List<SANPHAM> findByTenSPContaining(String tenSP);
+    List<SANPHAM> findByBarcode(Integer barcode);
 
 }

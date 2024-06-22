@@ -17,7 +17,5 @@ public class DONDATHANG {
     private Date ngayTao;
     private String ghiChu;
 
-    @OneToOne
-    @JoinColumn(name="maPhieuLuu")
-    private PHIEULUUKHO phieuluukho;
+
 }

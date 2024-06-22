@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -17,6 +18,9 @@ public class PHIEULUUKHO {
     private Date ngayTaoPhieu;
 
     @OneToOne
-    @JoinColumn(name="maDon")
-    private DONDATHANG dondathang;
+    @JoinColumn(name="maCTDH")
+    private CHITIETDATHANG chitietdathang;
+
+    @OneToMany(mappedBy = "phieuluukho", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<LUUKHO> luukhos;
 }

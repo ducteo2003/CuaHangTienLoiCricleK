@@ -11,13 +11,13 @@ import lombok.*;
 public class LUUKHO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int maLuuKho;
+    private int ID;
+
     @ManyToOne
-    @JoinColumn(name="maPhieuLuu")
+    @JoinColumn(name = "maPhieuLuu", nullable = false)
     private PHIEULUUKHO phieuluukho;
-    
-    @EmbeddedId
+
     @ManyToOne
-    @JoinColumn(name="maKho")
+    @JoinColumn(name = "maKho", nullable = false)
     private KHO kho;
 }

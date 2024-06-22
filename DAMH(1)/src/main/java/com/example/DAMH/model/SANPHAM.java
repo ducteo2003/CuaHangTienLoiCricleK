@@ -2,6 +2,8 @@ package com.example.DAMH.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -29,6 +31,7 @@ public class SANPHAM {
     @ManyToOne
     @JoinColumn(name= "maKM")
     private KHUYENMAI khuyenmai;
+
 
 
 

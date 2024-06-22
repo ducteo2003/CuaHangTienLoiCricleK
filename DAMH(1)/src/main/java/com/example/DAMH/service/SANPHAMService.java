@@ -71,4 +71,5 @@ public class SANPHAMService {
     public List<SANPHAM> searchSanPhamByBarcode(Integer barcode) {
         return sanPhamRepository.findByBarcode(barcode);
     }
+
 }

@@ -97,9 +97,9 @@
     <div class="sidebar">
         <div class="search">
             <h3>Tìm kiếm</h3>
-            <input type="text" placeholder="Theo mã, tên hàng">
-            <input type="text" placeholder="Theo Serial/IMEI">
-            <input type="text" placeholder="Theo ghi chú, mô tả đặt hàng">
+            <input type="text" id="searchBarcode" placeholder="Theo mã, tên hàng" onkeyup="filterProducts()">
+            <input type="text" id="searchSerial" placeholder="Theo Serial/IMEI" onkeyup="filterProducts()">
+            <input type="text" id="searchDescription" placeholder="Theo ghi chú, mô tả đặt hàng" onkeyup="filterProducts()">
         </div>
         <div class="filter">
             <h3>Loại hàng</h3>
@@ -142,7 +142,7 @@
                 <th>Đặt hàng</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="productTable">
             <tr th:each="product : ${products}">
                 <td th:text="${product.barcode}">Mã vạch</td>
                 <td th:text="${product.tenSP}">Tên sản phẩm</td>
@@ -161,5 +161,34 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    function filterProducts() {
+        var barcodeInput = document.getElementById('searchBarcode').value.toLowerCase();
+        var serialInput = document.getElementById('searchSerial').value.toLowerCase();
+        var descriptionInput = document.getElementById('searchDescription').value.toLowerCase();
+        var table = document.getElementById('productTable');
+        var tr = table.getElementsByTagName('tr');
+
+        for (var i = 0; i < tr.length; i++) {
+            var tdBarcode = tr[i].getElementsByTagName('td')[0];
+            var tdName = tr[i].getElementsByTagName('td')[1];
+            var tdDescription = tr[i].getElementsByTagName('td')[6]; // Assuming description is in the 7th column
+
+            if (tdBarcode || tdName || tdDescription) {
+                var barcodeValue = tdBarcode.textContent || tdBarcode.innerText;
+                var nameValue = tdName.textContent || tdName.innerText;
+                var descriptionValue = tdDescription.textContent || tdDescription.innerText;
+
+                if (barcodeValue.toLowerCase().indexOf(barcodeInput) > -1 &&
+                    nameValue.toLowerCase().indexOf(serialInput) > -1 &&
+                    descriptionValue.toLowerCase().indexOf(descriptionInput) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
 </body>
 </html>

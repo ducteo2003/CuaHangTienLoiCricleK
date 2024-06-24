@@ -35,7 +35,7 @@
             margin-bottom: 10px;
         }
 
-        .sidebar input[type="text"] {
+        .sidebar input[type="text"], .sidebar input[type="date"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -125,6 +125,14 @@
             <input type="radio" id="out" name="stock">
             <label for="out">Hết hàng trong kho</label>
         </div>
+        <div class="export">
+            <h3>Xuất Excel</h3>
+            <form action="/export/excel" method="get" target="_blank">
+                <input type="date" name="startDate" required>
+                <input type="date" name="endDate" required>
+                <button type="submit" class="btn btn-primary">Xuất</button>
+            </form>
+        </div>
     </div>
     <div class="product-list">
         <h1 class="header">Chi Tiết Đặt Hàng</h1>
@@ -149,7 +157,7 @@
                 <td th:text="${chitiet.diaChi}"></td>
                 <td th:text="${chitiet.giaDat}"></td>
                 <td th:text="${chitiet.tongDat}"></td>
-                <td th:text="${chitiet.sanpham.barcode}"></td>
+                <td th:text="${chitiet.sanpham.tenSP}"></td>
                 <td th:text="${chitiet.dondathang.maDon}"></td>
             </tr>
             </tbody>

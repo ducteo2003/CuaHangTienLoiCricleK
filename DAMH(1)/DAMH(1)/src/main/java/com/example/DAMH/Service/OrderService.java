@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 @Service
 public class OrderService {
@@ -45,7 +47,11 @@ public class OrderService {
         CHITIETDATHANG chitietdathang = new CHITIETDATHANG();
         chitietdathang.setSanpham(sanpham);
         chitietdathang.setSoLuongDat(soLuong);
-        chitietdathang.setNgayGiaoDuKien(new Date());
+
+        // Thiết lập ngày giao dự kiến là ngày hiện tại + 3 ngày
+        LocalDate ngayGiaoDuKien = LocalDate.now().plusDays(3);
+        chitietdathang.setNgayGiaoDuKien(Date.from(ngayGiaoDuKien.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
         chitietdathang.setDiaChi(diaChi);
         chitietdathang.setGiaDat(sanpham.getDonGia());
         chitietdathang.setTongDat(sanpham.getDonGia() * soLuong);
@@ -58,9 +64,13 @@ public class OrderService {
         PHIEULUUKHO phieuluukho = new PHIEULUUKHO();
         phieuluukho.setNgayTaoPhieu(new Date());
         phieuluukho.setChitietdathang(chitietdathang);
+        phieuluukho.setDondathang(dondathang); // Thêm mã đơn vào phiếu lưu kho
 
         // Lưu phiếu lưu kho vào cơ sở dữ liệu
         phieuluukho = phieuluukhoRepository.save(phieuluukho);
+
+        // Cập nhật phiếu lưu kho trong đơn đặt hàng
+        dondathang.getPhieuluukhos().add(phieuluukho); // Thêm phiếu lưu vào danh sách phiếu của đơn đặt hàng
 
         dondathangRepository.save(dondathang);
 

@@ -32,7 +32,4 @@ public class SANPHAM {
     @JoinColumn(name= "maKM")
     private KHUYENMAI khuyenmai;
 
-
-
-
 }

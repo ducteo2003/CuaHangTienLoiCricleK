@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class HOADON {
     private int maHD;
     private String tenKH; //có thể để mặc định là khách lẻ
     private Date ngayLap;
-
+    private String paymentType;
     @ManyToOne
     @JoinColumn(name="maNV")
     private NHANVIEN nhanvien;
@@ -23,4 +24,12 @@ public class HOADON {
     @OneToOne
     @JoinColumn(name="maBinhLuan")
     private BINHLUAN binhluan;
+
+    @OneToMany(mappedBy = "hoadon")
+    private List<BINHLUAN> binhLuans;
+
+    @OneToMany(mappedBy = "hoadon", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CHITIETHOADON> chitiethoadons;
+
+
 }

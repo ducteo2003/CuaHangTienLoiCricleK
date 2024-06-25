@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Danh sách sản phẩm</title>
-    <!-- Add Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/styles.css}">
     <style>
@@ -138,7 +137,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            align-items: stretch; /* Ensure child elements stretch */
+            align-items: stretch;
             border-radius: 15px;
         }
 
@@ -155,7 +154,7 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
-            overflow-y: auto; /* Add a scrollbar to the invoice list */
+            overflow-y: auto;
         }
 
         .invoice li {
@@ -247,7 +246,6 @@
                     <th>Tên sản phẩm</th>
                     <th>Đơn vị tính</th>
                     <th>Đơn giá</th>
-
                 </tr>
                 </thead>
                 <tbody id="product-list">
@@ -256,7 +254,6 @@
                     <td th:text="${sanPham.tenSP}">Tên sản phẩm</td>
                     <td th:text="${sanPham.donViTinh}">Đơn vị tính</td>
                     <td class="currency" th:text="${sanPham.donGia}">Đơn giá</td>
-
                 </tr>
                 </tbody>
             </table>
@@ -274,10 +271,11 @@
             <span id="total-amount">0</span>
         </div>
         <div class="checkout">
-            <button>Thanh toán</button>
+            <button type="button" onclick="goToCheckout()">Thanh toán</button>
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     let invoiceItems = JSON.parse(localStorage.getItem('invoiceItems')) || [];
 
@@ -289,7 +287,7 @@
     function toggleSelect(row) {
         const barcode = row.cells[0].innerText;
         const itemName = row.cells[1].innerText;
-        const itemPrice = parseFloat(row.cells[3].innerText.replace(/[^\d.-]/g, '')).toFixed(0); // Ensure the price is formatted without decimals
+        const itemPrice = parseFloat(row.cells[3].innerText.replace(/[^\d.-]/g, '')).toFixed(0);
 
         let item = invoiceItems.find(i => i.barcode === barcode);
 
@@ -364,10 +362,40 @@
         });
     }
 
+    function goToCheckout() {
+        const totalAmount = parseFloat(document.getElementById('total-amount').textContent.replace(/[^\d.-]/g, ''));
+        if (totalAmount <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không có sản phẩm để thanh toán',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        const formData = new FormData();
+        invoiceItems.forEach((item, index) => {
+            formData.append('barcode', item.barcode);
+            formData.append('quantity', item.quantity);
+            formData.append('price', item.itemPrice);
+        });
+
+        fetch('/nhanvien/checkout', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = `/nhanvien/payment-method?invoiceId=${data.maHD}`;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
         const currencyElements = document.querySelectorAll(".currency");
         currencyElements.forEach(function(element) {
-            const value = parseFloat(element.textContent.replace(/[^\d.-]/g, '')).toFixed(0); // Ensure the price is formatted without decimals
+            const value = parseFloat(element.textContent.replace(/[^\d.-]/g, '')).toFixed(0);
             if (!isNaN(value)) {
                 element.textContent = value.toLocaleString();
             }

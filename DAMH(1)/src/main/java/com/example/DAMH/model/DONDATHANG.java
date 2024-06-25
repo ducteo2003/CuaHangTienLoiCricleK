@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -17,5 +18,7 @@ public class DONDATHANG {
     private Date ngayTao;
     private String ghiChu;
 
+    @OneToMany(mappedBy = "dondathang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CHITIETDATHANG> chitietdathangs;
 
 }

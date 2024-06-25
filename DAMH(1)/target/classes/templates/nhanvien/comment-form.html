@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Nhập thông tin bình luận</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* CSS styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+
+        .comment-form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 400px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .comment-form h2 {
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        .comment-form p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .comment-form form {
+            margin-top: 20px;
+        }
+
+        .comment-form button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .comment-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="comment-form">
+    <h2>Nhập thông tin bình luận cho hóa đơn mã <span th:text="${invoiceId}"></span></h2>
+    <form action="/nhanvien/save-comment" method="post">
+        <input type="hidden" name="invoiceId" th:value="${invoiceId}">
+        <div class="form-group">
+            <label for="comment">Nội dung bình luận:</label>
+            <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Lưu bình luận</button>
+    </form>
+</div>
+</body>
+</html>

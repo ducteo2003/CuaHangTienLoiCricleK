@@ -226,12 +226,12 @@
     <form action="/nhanvien/complete-payment" method="post" id="paymentForm">
         <input type="hidden" name="invoiceId" th:value="${invoiceId}">
         <div class="custom-radio">
-            <input type="radio" id="cash" name="paymentType" value="cash" checked>
-            <label for="cash">Thanh toán bằng tiền mặt</label>
+            <input type="radio" id="cash" name="paymentType" value="CASH" checked>
+            <label for="CASH">Thanh toán bằng tiền mặt</label>
         </div>
         <div class="custom-radio">
-            <input type="radio" id="momo" name="paymentType" value="momo">
-            <label for="momo">Thanh toán bằng MoMo</label>
+            <input type="radio" id="vnpay" name="paymentType" value="vnpay">
+            <label for="vnpay">Thanh toán bằng VNPAY</label>
         </div>
         <button type="button" id="commentBtn" class="btn btn-warning mt-3" onclick="openCommentModal()">Bình luận</button>
         <button type="button" class="btn btn-primary mt-3" onclick="processPayment()">Tiếp tục</button>
@@ -277,6 +277,25 @@
     function openCommentModal() {
         $('#commentModal').modal('show'); // Mở modal bình luận
     }
+    function processPayment() {
+        const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+        if (paymentType === 'vnpay') {
+            generateVNPayPaymentUrl();
+        } else {
+            submitPaymentForm();
+        }
+    }
+
+    function generateVNPayPaymentUrl() {
+        const totalAmount = parseFloat(document.getElementById('totalAmount').textContent.replace(/\D/g, ''));
+        fetch(`/nhanvien/generate-payment-url?totalAmount=${totalAmount}`)
+            .then(response => response.text())
+            .then(paymentUrl => {
+                window.location.href = paymentUrl;
+            })
+            .catch(error => console.error('Error generating VNPay payment URL:', error));
+    }
+
 
     $('#commentForm').submit(function(event) {
         event.preventDefault();
@@ -307,32 +326,9 @@
         });
     });
 
-    function processPayment() {
-        const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
-        if (paymentType === 'momo') {
-            generateMoMoQRCode();
-            document.getElementById('momoQRCode').style.display = 'block';
-        } else {
-            submitPaymentForm();
-        }
-    }
 
-    function generateMoMoQRCode() {
-        const totalAmount = parseFloat(document.getElementById('totalAmount').textContent.replace(/\D/g, ''));
-        const invoiceId = document.querySelector('input[name="invoiceId"]').value;
 
-        fetch(`/nhanvien/generate-momo-url?invoiceId=${invoiceId}&totalAmount=${totalAmount}`)
-            .then(response => response.text())
-            .then(url => {
-                const qrCodeURL = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(url)}&chs=180x180&choe=UTF-8&chld=L|2`;
-                document.getElementById('momoQRImage').src = qrCodeURL;
-            })
-            .catch(error => console.error('Error generating MoMo QR Code:', error));
-    }
 
-    function confirmMoMoPayment() {
-        submitPaymentForm();
-    }
 
     function submitPaymentForm() {
         const formData = new FormData(document.getElementById('paymentForm'));

@@ -5,7 +5,6 @@ import com.example.DAMH.model.CHITIETHOADON;
 import com.example.DAMH.model.HOADON;
 import com.example.DAMH.service.BINHLUANService;
 import com.example.DAMH.service.HOADONService;
-import com.example.DAMH.service.MoMoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +23,7 @@ public class InvoiceController {
 
     @Autowired
     private HOADONService hoadonService;
-    @Autowired
-    private MoMoService momoService;
+
     @Autowired
     private BINHLUANService binhLuanService;
 
@@ -47,13 +46,13 @@ public class InvoiceController {
         model.addAttribute("totalAmount", totalAmount);
         return "nhanvien/paymentMethod";
     }
-
-    @PostMapping("/generate-momo-url")
+    @GetMapping("/generate-payment-url")
     @ResponseBody
-    public String generateMoMoUrl(@RequestParam("invoiceId") int invoiceId, @RequestParam("totalAmount") long totalAmount) {
-        String orderId = "Order" + invoiceId;
-        return momoService.generatePaymentUrl(orderId, totalAmount);
+    public String generatePaymentUrl(@RequestParam("totalAmount") long totalAmount) throws UnsupportedEncodingException {
+        // Call PaymentController to generate payment URL
+        return new PaymentController().getPay(totalAmount);
     }
+
 
     @PostMapping("/complete-payment")
     @Transactional
@@ -76,4 +75,16 @@ public class InvoiceController {
         response.put("message", "Comment submitted successfully!");
         return response;
     }
+    @GetMapping("/vnpay_return")
+    public String vnpayReturn(@RequestParam Map<String, String> params, Model model) {
+        String vnp_ResponseCode = params.get("vnp_ResponseCode");
+        System.out.println("VNPay Response Code: " + vnp_ResponseCode);
+        if ("00".equals(vnp_ResponseCode)) {
+            model.addAttribute("message", "Thanh toán thành công!");
+        } else {
+            model.addAttribute("message", "Thanh toán thất bại. Vui lòng thử lại.");
+        }
+        return "nhanvien/paymentResult";
+    }
+
 }

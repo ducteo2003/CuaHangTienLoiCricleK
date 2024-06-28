@@ -36,6 +36,7 @@ public class HOADONService {
     @Autowired
     private DONDATHANGRepository dondathangRepository;
 
+
     @Transactional
     public HOADON createInvoice(List<Integer> barcodes, List<Integer> quantities, List<Double> prices) {
         // Create a new invoice
@@ -84,4 +85,6 @@ public class HOADONService {
     public HOADON findById(int invoiceId) {
         return hoadonRepository.findById(invoiceId).orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại"));
     }
+
+
 }

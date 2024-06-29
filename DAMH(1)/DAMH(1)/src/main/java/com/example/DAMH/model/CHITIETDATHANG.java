@@ -1,9 +1,9 @@
 package com.example.DAMH.model;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-
 
 @Data
 @RequiredArgsConstructor
@@ -17,16 +17,14 @@ public class CHITIETDATHANG {
     private int soLuongDat;
     private Date ngayGiaoDuKien;
     private String diaChi;
-    private double giaDat; //giaDat=donGia(SANPHAM)
-    private double tongDat; //giaDat*soLuongDat
-
+    private double giaDat;
+    private double tongDat;
 
     @ManyToOne
-    @JoinColumn(name="barcode", nullable = false)
+    @JoinColumn(name="barcode", referencedColumnName = "barcode", nullable = false)
     private SANPHAM sanpham;
 
-
     @ManyToOne
-    @JoinColumn(name="maDon", nullable = false)
+    @JoinColumn(name="maDon", referencedColumnName = "maDon", nullable = false)
     private DONDATHANG dondathang;
 }

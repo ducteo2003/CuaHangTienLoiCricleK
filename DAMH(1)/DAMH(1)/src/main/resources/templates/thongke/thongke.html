@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Thống kê sản phẩm bán chạy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .stats-container {
+            margin-top: 50px;
+        }
+        .form-section, .chart-section, .comment-section {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .title {
+            font-size: 2rem;
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+        .btn-link {
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+        .btn-link:hover {
+            text-decoration: none;
+            color: #0056b3;
+        }
+        .comment-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .comment-card {
+            flex: 0 0 auto;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .card-body {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .card-text {
+            color: #343a40;
+        }
+        .text-muted {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container stats-container">
+        <div class="row">
+            <div class="col-md-8 chart-section">
+                <h1 class="title">Thống kê sản phẩm bán chạy</h1>
+                <div class="d-flex justify-content-around">
+                    <a class="btn btn-link" href="/thongkeTuan">Theo tuần</a>
+                    <a class="btn btn-link" href="/thongkeThang">Theo tháng</a>
+                </div>
+                <div class="mt-4">
+                    <canvas id="myChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+            <div class="col-md-4 comment-section">
+                <h2 class="subtitle">Bình luận:</h2>
+                <div class="comment-card" th:each="comment : ${comments}">
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-text" th:text="${comment.noiDung}">Nội dung bình luận</p>
+                            <p class="card-text"><small class="text-muted" th:text="${comment.ngayBinhLuan}">Ngày bình luận</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var results = /*[[${results}]]*/ '[]';
+        var mode = /*[[${mode}]]*/ '';
+
+        if (results.length > 0) {
+            var labels = [];
+            var quantityData = [];
+            var revenueData = [];
+
+            results.forEach(function(result) {
+                if (mode === 'weekly') {
+                    labels.push('Năm ' + result[0] + ' - Tuần ' + result[1]);
+                } else if (mode === 'monthly') {
+                    labels.push('Năm ' + result[0] + ' - Tháng ' + result[1]);
+                }
+                quantityData.push(result[2]); // Số lượng bán
+                revenueData.push(result[3]); // Số tiền bán
+            });
+
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Số lượng bán',
+                        data: quantityData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        fill: false,
+                        yAxisID: 'y-axis-1'
+                    }, {
+                        label: 'Số tiền bán',
+                        data: revenueData,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        fill: false,
+                        yAxisID: 'y-axis-2'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        'y-axis-1': {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            beginAtZero: true,
+                        },
+                        'y-axis-2': {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                            },
+                        }
+                    }
+                }
+            });
+        }
+        /*]]>*/
+    </script>
+</section>
+</body>
+</html>

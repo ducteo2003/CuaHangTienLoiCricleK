@@ -18,15 +18,19 @@ public class SANPHAMService {
         return sanphamRepository.findAll();
     }
 
-    public Optional<SANPHAM> findById(int barcode) {
-        return sanphamRepository.findById(barcode);
+    public Optional<SANPHAM> findById(int id) {
+        return sanphamRepository.findById(id);
+    }
+
+    public Optional<SANPHAM> findByBarcode(int barcode) {
+        return sanphamRepository.findByBarcode(barcode);
     }
 
     public SANPHAM save(SANPHAM sanpham) {
         return sanphamRepository.save(sanpham);
     }
 
-    public void deleteById(int barcode) {
-        sanphamRepository.deleteById(barcode);
+    public void deleteById(int id) {
+        sanphamRepository.deleteById(id);
     }
 }

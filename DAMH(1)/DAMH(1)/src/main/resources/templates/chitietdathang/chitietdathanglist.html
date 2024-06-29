@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <title>Chi Tiết Đặt Hàng</title>
@@ -9,155 +10,143 @@
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
         }
-
         .container-custom {
             display: flex;
-            padding: 20px;
+            flex-wrap: nowrap;
+            margin-top: 20px;
         }
-
-        .header {
-            text-align: center;
-            width: 100%;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
         .sidebar {
-            width: 250px;
-            padding: 10px;
+            flex: 0 0 250px;
+            padding: 20px;
             background-color: #fff;
-            border-right: 1px solid #ddd;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
         }
-
-        .sidebar h3 {
-            color: #007bff;
-            margin-bottom: 10px;
-        }
-
-        .sidebar input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .sidebar input[type="checkbox"], .sidebar input[type="radio"] {
-            margin-right: 10px;
-        }
-
         .product-list {
             flex: 1;
-            padding: 10px;
+            padding: 20px;
             background-color: #fff;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            border-radius: 4px;
-            margin-left: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-
-        .product-list table {
+        .sidebar h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .sidebar input[type="text"], .sidebar input[type="checkbox"], .sidebar input[type="radio"], .sidebar input[type="date"] {
+            margin-bottom: 10px;
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
         }
-
-        .product-list th, .product-list td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
+        .sidebar label {
+            margin-left: 5px;
         }
-
-        .product-list th {
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
+        .sidebar .btn {
+            width: 100%;
         }
-
-        .product-list tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .table-responsive {
+            max-height: 500px;
+            overflow-y: auto;
         }
-
-        .product-list tbody tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        .product-list a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        .product-list a:hover {
-            text-decoration: underline;
+        .search-buttons {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-<div class="container-custom">
-    <div class="sidebar">
-        <div class="search">
-            <h3>Tìm kiếm</h3>
-            <input type="text" placeholder="Theo mã, tên hàng">
-            <input type="text" placeholder="Theo Serial/IMEI">
-            <input type="text" placeholder="Theo ghi chú, mô tả đặt hàng">
+<section layout:fragment="content">
+    <div class="container-custom">
+        <div class="sidebar" data-aos="fade-right">
+            <div class="search">
+                <h3>Tìm kiếm</h3>
+                <input type="text" id="searchBarcode" placeholder="Theo mã, tên hàng" oninput="filterProducts()">
+                <input type="text" id="searchSerial" placeholder="Theo Serial/IMEI" oninput="filterProducts()">
+                <input type="text" id="searchDescription" placeholder="Theo ghi chú, mô tả đặt hàng" oninput="filterProducts()">
+                <div class="search-buttons">
+                    <button class="btn btn-secondary" onclick="resetFilters()">Đặt lại</button>
+                </div>
+            </div>
+            <div class="export">
+                <h3>Xuất Excel</h3>
+                <form action="/export/excel" method="get" target="_blank">
+                    <input type="date" name="startDate" required>
+                    <input type="date" name="endDate" required>
+                    <button type="submit" class="btn btn-primary">Xuất</button>
+                </form>
+            </div>
         </div>
-        <div class="filter">
-            <h3>Loại hàng</h3>
-            <input type="checkbox" id="normal" name="type">
-            <label for="normal">Hàng hóa thường</label><br>
-            <input type="checkbox" id="serial" name="type">
-            <label for="serial">Hàng hóa - Serial/IMEI</label><br>
-            <input type="checkbox" id="service" name="type">
-            <label for="service">Dịch vụ</label><br>
-            <input type="checkbox" id="combo" name="type">
-            <label for="combo">Combo - Đồng giá</label>
-        </div>
-        <div class="stock">
-            <h3>Tồn kho</h3>
-            <input type="radio" id="all" name="stock">
-            <label for="all">Tất cả</label><br>
-            <input type="radio" id="low" name="stock">
-            <label for="low">Dưới định mức tồn</label><br>
-            <input type="radio" id="order" name="stock">
-            <label for="order">Vượt định mức tồn</label><br>
-            <input type="radio" id="in" name="stock">
-            <label for="in">Còn hàng trong kho</label><br>
-            <input type="radio" id="out" name="stock">
-            <label for="out">Hết hàng trong kho</label>
+        <div class="product-list" data-aos="fade-left">
+            <h1 class="header">Chi Tiết Đặt Hàng</h1>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Mã CTDH</th>
+                        <th>Số Lượng Đặt</th>
+                        <th>Ngày Giao Dự Kiến</th>
+                        <th>Địa Chỉ</th>
+                        <th>Giá Đặt</th>
+                        <th>Tổng Đặt</th>
+                        <th>Sản Phẩm</th>
+                        <th>Đơn Đặt Hàng</th>
+                    </tr>
+                    </thead>
+                    <tbody id="productTable">
+                    <tr th:each="chitiet : ${chitietdathangList}">
+                        <td th:text="${chitiet.maCTDH}"></td>
+                        <td th:text="${chitiet.soLuongDat}"></td>
+                        <td th:text="${#dates.format(chitiet.ngayGiaoDuKien, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${chitiet.diaChi}"></td>
+                        <td th:text="${chitiet.giaDat}"></td>
+                        <td th:text="${chitiet.tongDat}"></td>
+                        <td th:text="${chitiet.sanpham.tenSP}"></td>
+                        <td th:text="${chitiet.dondathang.maDon}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="product-list">
-        <h1 class="header">Chi Tiết Đặt Hàng</h1>
-        <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Mã CTDH</th>
-                <th>Số Lượng Đặt</th>
-                <th>Ngày Giao Dự Kiến</th>
-                <th>Địa Chỉ</th>
-                <th>Giá Đặt</th>
-                <th>Tổng Đặt</th>
-                <th>Sản Phẩm</th>
-                <th>Đơn Đặt Hàng</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="chitiet : ${chitietdathangList}">
-                <td th:text="${chitiet.maCTDH}"></td>
-                <td th:text="${chitiet.soLuongDat}"></td>
-                <td th:text="${#dates.format(chitiet.ngayGiaoDuKien, 'dd/MM/yyyy')}"></td>
-                <td th:text="${chitiet.diaChi}"></td>
-                <td th:text="${chitiet.giaDat}"></td>
-                <td th:text="${chitiet.tongDat}"></td>
-                <td th:text="${chitiet.sanpham.barcode}"></td>
-                <td th:text="${chitiet.dondathang.maDon}"></td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init();
+
+        function filterProducts() {
+            var barcodeInput = document.getElementById('searchBarcode').value.toLowerCase();
+            var serialInput = document.getElementById('searchSerial').value.toLowerCase();
+            var descriptionInput = document.getElementById('searchDescription').value.toLowerCase();
+            var table = document.getElementById('productTable');
+            var tr = table.getElementsByTagName('tr');
+
+            for (var i = 0; i < tr.length; i++) {
+                var tdBarcode = tr[i].getElementsByTagName('td')[1];
+                var tdName = tr[i].getElementsByTagName('td')[2];
+                var tdDescription = tr[i].getElementsByTagName('td')[3];
+
+                if (tdBarcode || tdName || tdDescription) {
+                    var barcodeValue = tdBarcode.textContent || tdBarcode.innerText;
+                    var nameValue = tdName.textContent || tdName.innerText;
+                    var descriptionValue = tdDescription.textContent || tdDescription.innerText;
+
+                    if (barcodeValue.toLowerCase().indexOf(barcodeInput) > -1 &&
+                        nameValue.toLowerCase().indexOf(serialInput) > -1 &&
+                        descriptionValue.toLowerCase().indexOf(descriptionInput) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('searchBarcode').value = "";
+            document.getElementById('searchSerial').value = "";
+            document.getElementById('searchDescription').value = "";
+            filterProducts();
+        }
+    </script>
+</section>
 </body>
 </html>

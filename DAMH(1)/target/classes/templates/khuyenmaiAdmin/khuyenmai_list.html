@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách khuyến mãi</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<section layout:fragment="content" class="container">
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Danh sách khuyến mãi</h1>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Mã</th>
+                <th scope="col">Ngày bắt đầu</th>
+                <th scope="col">Ngày kết thúc</th>
+                <th scope="col">Thời hạn (ngày)</th>
+                <th scope="col">Hình thức</th>
+                <th scope="col">Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Duyệt danh sách khuyến mãi -->
+            <tr th:each="km : ${khuyenmais}">
+                <td th:text="${km.maKM}"></td>
+                <td th:text="${#dates.format(km.ngayBatDau, 'dd/MM/yyyy')}"></td>
+                <td th:text="${#dates.format(km.ngayKetThuc, 'dd/MM/yyyy')}"></td>
+                <td th:text="${km.thoiHan}"></td>
+                <td>
+                    <span th:if="${km.hinhthuc != null}" th:text="${km.hinhthuc.tenHinhThuc}"></span>
+                    <span th:if="${km.hinhthuc == null}">Không có dữ liệu</span>
+                </td>
+                <td>
+                    <a th:href="@{/khuyenmai/delete/{maKM}(maKM=${km.maKM})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc không?')">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </a>
+                    <a th:href="@{/khuyenmai/detail/{maKM}(maKM=${km.maKM})}" class="btn btn-info btn-sm btn-custom">
+                        <i class="fas fa-info-circle"></i> Xem
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/khuyenmai/addForm}" class="btn btn-success btn-sm">
+            <i class="fas fa-plus-circle"></i> Thêm mới khuyến mãi
+        </a>
+    </div>
+</section>
+
+<!-- Optional: Bootstrap JS và jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

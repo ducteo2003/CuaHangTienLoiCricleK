@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm mới khuyến mãi</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<section layout:fragment="content" class="container">
+    <div class="card">
+        <div class="container mt-5">
+            <h1 class="text-center mb-4">Thêm mới khuyến mãi</h1>
+            <form th:action="@{/khuyenmai/save_add}" method="post" th:object="${khuyenmai}" id="khuyenmaiForm">
+                <div class="form-group">
+                    <label for="ngayBatDau">Ngày bắt đầu:</label>
+                    <input type="datetime-local" class="form-control" id="ngayBatDau" name="dateBatDau" required>
+                </div>
+                <div class="form-group">
+                    <label for="ngayKetThuc">Ngày kết thúc:</label>
+                    <input type="datetime-local" class="form-control" id="ngayKetThuc" name="dateKetThuc" required>
+                </div>
+                <div class="form-group">
+                    <label for="hinhThuc">Hình thức:</label>
+                    <select class="form-control" id="hinhThuc" th:field="*{hinhthuc}">
+                        <option th:each="ht : ${hinhthucs}" th:value="${ht.maHinhThuc}" th:text="${ht.tenHinhThuc}"></option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Optional: Bootstrap JS và jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

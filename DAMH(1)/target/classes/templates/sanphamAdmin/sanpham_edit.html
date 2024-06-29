@@ -1,0 +1,290 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh Sửa Sản Phẩm</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    &lt;!&ndash; Font Awesome CSS &ndash;&gt;
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #007bff;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .form-group .btn-back {
+            background-color: #6c757d;
+        }
+        .form-group .btn-back:hover {
+            background-color: #5a6268;
+        }
+        .form-group i {
+            margin-right: 8px;
+            color: #007bff;
+        }
+        .form-group .fas.fa-save {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="card">
+        <div class="card-body">
+            <h2>Chỉnh Sửa Sản Phẩm</h2>
+            <form th:action="@{/sanphamAdmin/save_update}" th:object="${sanpham}" method="post">
+                <div class="form-group">
+                    <label for="barcode"><i class="fas fa-barcode"></i> Mã sản phẩm</label>
+                    <input type="text" id="barcode" th:field="*{barcode}" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="tenSP"><i class="fas fa-tag"></i> Tên Sản Phẩm</label>
+                    <input type="text" id="tenSP" th:field="*{tenSP}" required />
+                </div>
+                <div class="form-group">
+                    <label for="donViTinh"><i class="fas fa-balance-scale"></i> Đơn Vị Tính</label>
+                    <input type="text" id="donViTinh" th:field="*{donViTinh}" required />
+                </div>
+                <div class="form-group">
+                    <label for="donGia"><i class="fas fa-dollar-sign"></i> Đơn Giá</label>
+                    <input type="number" step="0.01" id="donGia" th:field="*{donGia}" required />
+                </div>
+                <div class="form-group">
+                    <label for="ncc"><i class="fas fa-industry"></i> Nhà Cung Cấp</label>
+                    <select id="ncc" th:field="*{ncc}" >
+                        <option value="">-&#45;&#45;</option>
+                        <option th:each="supplier : ${NCCs}" th:value="${supplier.maNCC}" th:text="${supplier.tenNCC}">Chọn Nhà Cung Cấp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vitri"><i class="fas fa-map-marker-alt"></i> Vị Trí</label>
+                    <select id="vitri" th:field="*{vitri}" required>
+                        <option th:each="location : ${VTs}" th:value="${location.maViTri}" th:text="${location.tenViTri}">Chọn Vị Trí</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="loaisp"><i class="fas fa-list"></i> Loại Sản Phẩm</label>
+                    <select id="loaisp" th:field="*{loaisp}" required>
+                        <option th:each="type : ${LSPs}" th:value="${type.maLoai}" th:text="${type.tenLoai}">Chọn Loại Sản Phẩm</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="khuyenmai"><i class="fas fa-gift"></i> Khuyến Mãi</label>
+                    <select id="khuyenmai" th:field="*{khuyenmai}" class="form-control">
+                        <option value="">-&#45;&#45;</option> &lt;!&ndash; Tùy chọn null &ndash;&gt;
+                        <option th:each="promotion : ${KMs}"
+                                th:value="${promotion.maKM}"
+                                th:text="${promotion.hinhthuc.tenHinhThuc + ' - Kết thúc: ' + #dates.format(promotion.ngayKetThuc, 'dd/MM/yyyy')}">
+                            Chọn Khuyến Mãi
+                        </option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-info btn-back" onclick="history.back()">Quay lại
+                    </button>
+                    <button type="submit" class="btn btn-success">Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>
+-->
+
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh Sửa Sản Phẩm</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #007bff;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .form-group .btn-back {
+            background-color: #6c757d;
+        }
+        .form-group .btn-back:hover {
+            background-color: #5a6268;
+        }
+        .form-group i {
+            margin-right: 8px;
+            color: #007bff;
+        }
+        .form-group .fas.fa-save {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="card">
+        <div class="card-body">
+            <h2>Chỉnh Sửa Sản Phẩm</h2>
+            <form th:action="@{/sanphamAdmin/save_update}" th:object="${sanpham}" method="post">
+                <div class="form-group">
+                    <label for="barcode"><i class="fas fa-barcode"></i> Mã sản phẩm</label>
+                    <input type="text" id="barcode" th:field="*{barcode}" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="tenSP"><i class="fas fa-tag"></i> Tên Sản Phẩm</label>
+                    <input type="text" id="tenSP" th:field="*{tenSP}" required />
+                </div>
+                <div class="form-group">
+                    <label for="donViTinh"><i class="fas fa-balance-scale"></i> Đơn Vị Tính</label>
+                    <input type="text" id="donViTinh" th:field="*{donViTinh}" required />
+                </div>
+                <div class="form-group">
+                    <label for="donGia"><i class="fas fa-dollar-sign"></i> Đơn Giá</label>
+                    <input type="number" step="0.01" id="donGia" th:field="*{donGia}" required />
+                </div>
+                <div class="form-group">
+                    <label for="ncc"><i class="fas fa-industry"></i> Nhà Cung Cấp</label>
+                    <select id="ncc" th:field="*{ncc}" >
+                        <option value="">---</option>
+                        <option th:each="supplier : ${NCCs}" th:value="${supplier.maNCC}" th:text="${supplier.tenNCC}">Chọn Nhà Cung Cấp</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vitri"><i class="fas fa-map-marker-alt"></i> Vị Trí</label>
+                    <select id="vitri" th:field="*{vitri}" required>
+                        <option th:each="location : ${VTs}" th:value="${location.maViTri}" th:text="${location.tenViTri}">Chọn Vị Trí</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="loaisp"><i class="fas fa-list"></i> Loại Sản Phẩm</label>
+                    <select id="loaisp" th:field="*{loaisp}" required>
+                        <option th:each="type : ${LSPs}" th:value="${type.maLoai}" th:text="${type.tenLoai}">Chọn Loại Sản Phẩm</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="khuyenmai"><i class="fas fa-gift"></i> Khuyến Mãi</label>
+                    <select id="khuyenmai" th:field="*{khuyenmai}" class="form-control">
+                        <option value="">---</option> <!-- Tùy chọn null -->
+                        <option th:each="promotion : ${KMs}"
+                                th:value="${promotion.maKM}"
+                                th:text="${promotion.hinhthuc.tenHinhThuc + ' - Kết thúc: ' + #dates.format(promotion.ngayKetThuc, 'dd/MM/yyyy')}">
+                            Chọn Khuyến Mãi
+                        </option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-info btn-back" onclick="history.back()">Quay lại
+                    </button>
+                    <button type="submit" class="btn btn-success">Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

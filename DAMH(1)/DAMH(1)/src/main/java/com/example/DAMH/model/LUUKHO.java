@@ -1,4 +1,3 @@
-
 package com.example.DAMH.model;
 
 import jakarta.persistence.*;
@@ -24,6 +23,3 @@ public class LUUKHO {
 
     // Các thuộc tính khác nếu cần
 }
-
-
-

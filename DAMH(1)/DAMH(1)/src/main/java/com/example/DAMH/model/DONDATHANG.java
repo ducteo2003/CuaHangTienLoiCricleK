@@ -20,8 +20,8 @@ public class DONDATHANG {
     private String ghiChu;
 
     @OneToMany(mappedBy = "dondathang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CHITIETDATHANG> chitietdathangs;
+    private List<CHITIETDATHANG> chitietdathangs = new ArrayList<>();
 
     @OneToMany(mappedBy = "dondathang", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PHIEULUUKHO> phieuluukhos = new ArrayList<>(); // Khởi tạo danh sách
+    private List<PHIEULUUKHO> phieuluukhos = new ArrayList<>(); // Đảm bảo PHIEULUUKHO là một @Entity
 }

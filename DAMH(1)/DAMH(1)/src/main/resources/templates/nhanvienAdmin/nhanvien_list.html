@@ -1,0 +1,203 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layoutAdmin}">
+<head>
+    <title>Danh sách nhân viên</title>
+    &lt;!&ndash; Bootstrap CSS &ndash;&gt;
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    &lt;!&ndash; Font Awesome CSS &ndash;&gt;
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            margin: 20px 0;
+        }.search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .search-button {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <h1 class="text-center">Danh sách nhân viên</h1>
+
+        &lt;!&ndash; Form tìm kiếm &ndash;&gt;
+        <form th:action="@{/nhanvienAdmin/search}" method="get" class="form-inline mb-3 search-form">
+            <input type="text" name="text" class="form-control search-input" placeholder="Tìm kiếm tên nhân viên/tên chức vụ...">
+            <button type="submit" class="btn btn-primary search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th style="text-align:center">Mã NV</th>
+                <th style="text-align:center">Tên NV</th>
+                <th style="text-align:center">Email</th>
+                <th style="text-align:center">Năm Sinh</th>
+                <th style="text-align:center">Giới Tính</th>
+                <th style="text-align:center">Tên Đăng Nhập</th>
+                <th style="text-align:center">Chức Vụ</th>
+                <th style="text-align:center">Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="nhanVien : ${nhanviens}">
+                <td th:text="${nhanVien.maNV}">Mã NV</td>
+                <td th:text="${nhanVien.tenNV}">Tên NV</td>
+                <td th:text="${nhanVien.email}">Email</td>
+                <td th:text="${nhanVien.namSinh}">Năm Sinh</td>
+                <td th:text="${nhanVien.gioiTinh ? 'Nam' : 'Nữ'}">Giới Tính</td>
+                <td th:text="${nhanVien.tenDangNhap}">Tên Đăng Nhập</td>
+                &lt;!&ndash;<td th:text="${nhanVien.chucvu != null ? nhanVien.chucvu.tenChucVu : 'N/A'}">Chức Vụ</td>&ndash;&gt;
+                <td>
+                    <a th:href="@{/nhanvienAdmin/delete/{id}(id=${nhanVien.maNV})}"
+                       class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc không?')">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                    <a th:href="@{/nhanvienAdmin/edit/{id}(id=${nhanVien.maNV})}"
+                       class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/nhanvienAdmin/add}" class="btn btn-success btn-sm">
+            <i class="fas fa-plus-circle"></i> Thêm mới nhân viên
+        </a>
+    </div>
+</section>
+&lt;!&ndash; Bootstrap JS (Optional) &ndash;&gt;
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layoutAdmin}">
+<head>
+    <title>Danh sách nhân viên</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        h1 {
+            margin: 20px 0;
+        }
+        .search-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .search-button {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container">
+        <h1 class="text-center">Danh sách nhân viên</h1>
+
+        <!-- Form tìm kiếm -->
+        <form th:action="@{/nhanvienAdmin/search}" method="get" class="form-inline mb-3 search-form">
+            <input type="text" name="text" class="form-control search-input" placeholder="Tìm kiếm tên nhân viên/tên chức vụ...">
+            <button type="submit" class="btn btn-primary search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Mã NV</th>
+                <th>Tên NV</th>
+                <th>Email</th>
+                <th>Năm Sinh</th>
+                <th>Giới Tính</th>
+                <th>Tên Đăng Nhập</th>
+                <th>Chức Vụ</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="nhanVien : ${nhanviens}">
+                <td th:text="${nhanVien.maNV}">Mã NV</td>
+                <td th:text="${nhanVien.tenNV}">Tên NV</td>
+                <td th:text="${nhanVien.email}">Email</td>
+                <td th:text="${nhanVien.namSinh}">Năm Sinh</td>
+                <td th:text="${nhanVien.gioiTinh ? 'Nam' : 'Nữ'}">Giới Tính</td>
+                <td th:text="${nhanVien.tenDangNhap}">Tên Đăng Nhập</td>
+                <!--<td th:text="${nhanVien.chucvu != null ? nhanVien.chucvu.tenChucVu : 'N/A'}">Chức Vụ</td>-->
+                <td th:text="${nhanVien.roles.size() > 0 ? nhanVien.roles.iterator().next().tenChucVu : 'N/A'}">Chức Vụ</td>
+
+                <td>
+                    <a th:href="@{/nhanvienAdmin/delete/{id}(id=${nhanVien.maNV})}"
+                       class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc không?')">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </a>
+                    <a th:href="@{/nhanvienAdmin/edit/{id}(id=${nhanVien.maNV})}"
+                       class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Chỉnh sửa
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/nhanvienAdmin/add}" class="btn btn-success btn-sm">
+            <i class="fas fa-plus-circle"></i> Thêm mới nhân viên
+        </a>
+    </div>
+</section>
+<!-- Bootstrap JS (Optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layoutAdmin}">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm mới nhà cung cấp</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Optional: Your custom CSS -->
+</head>
+<body>
+<section layout:fragment="content" class="container">
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Thêm mới nhà cung cấp</h1>
+        <!-- Form thêm mới -->
+        <form th:action="@{/NCC/save_add}" method="post" th:object="${NCC}">
+            <div class="form-group">
+                <label for="tenNCC">Tên nhà cung cấp:</label>
+                <input type="text" class="form-control" id="tenNCC" name="tenNCC" th:field="*{tenNCC}" required>
+            </div>
+            <!-- Thêm các trường khác cần thiết -->
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
+    </div>
+</section>
+
+<!-- Optional: Bootstrap JS và jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

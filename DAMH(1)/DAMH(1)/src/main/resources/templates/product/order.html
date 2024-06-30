@@ -9,7 +9,7 @@
 <section>
     <div class="container">
         <h1>Đặt hàng sản phẩm</h1>
-        <form th:action="@{/product/placeOrder}" th:object="${productOrderForm}" method="post">
+        <form th:action="@{/product/placeOrder}" th:object="${productOrderForm}" method="post" onsubmit="return validateForm()">
             <div class="form-row">
                 <div class="form-group col-md-12">
                     <label for="diaChi">Địa chỉ:</label>
@@ -21,7 +21,7 @@
                     <label for="maKho">Mã kho:</label>
                     <select id="maKho" th:field="*{maKho}" class="form-control" required>
                         <option value="" disabled selected>Chọn kho</option>
-                        <option th:each="kho : ${khos}" th:value="${kho.maKho}" ></option>
+                        <option th:each="kho : ${khos}" th:value="${kho.maKho}" th:text="${kho.maKho}"></option>
                     </select>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                 <tbody>
                 <tr th:each="product, stat : ${products}">
                     <td>
-                        <input type="text" th:field="*{products[__${stat.index}__].barcode}" th:value="${product.barcode}" class="form-control">
+                        <input type="number" id="barcode-[[${stat.index}]]" th:field="*{products[__${stat.index}__].barcode}" th:value="${product.barcode}" value="${product.barcode}" class="form-control">
                         <span th:text="${product.barcode}"></span>
                     </td>
                     <td th:text="${product.tenSP}">Tên sản phẩm</td>
@@ -57,5 +57,17 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    function validateForm() {
+        const barcodes = document.querySelectorAll('[id^="barcode-"]');
+        for (let i = 0; i < barcodes.length; i++) {
+            if (barcodes[i].value === '' || barcodes[i].value == '0') {
+                alert('Vui lòng xác nhận mã vạch cho sản phẩm ' + (i + 1));
+                return false;
+            }
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

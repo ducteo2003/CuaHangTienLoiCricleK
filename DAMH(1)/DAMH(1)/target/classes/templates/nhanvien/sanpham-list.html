@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Danh sách sản phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .sidebar {
+            flex: 0.8;
+            background-color: #cce5ff;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            position: relative;
+            border-radius: 15px;
+        }
+
+        .sidebar.collapsed {
+            flex: 0;
+            padding: 20px 0;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            background-color: #ceb7f8;
+            margin: 10px 0;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .toggle-icon {
+            position: absolute;
+            top: 10px;
+            left: 100%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            color: #8bc34a;
+            background-color: #fff;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed .toggle-icon {
+            left: 0;
+            transform: translateX(-50%);
+        }
+
+        .content {
+            flex: 2.5;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content .search-bar input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .content .search-bar button {
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .table-container {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #cce5ff;
+        }
+
+        .currency {
+            text-align: right;
+        }
+
+        .invoice {
+            flex: 1;
+            background-color: #cce5ff;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: stretch;
+            border-radius: 15px;
+        }
+
+        .invoice h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .invoice ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow-y: auto;
+        }
+
+        .invoice li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #d1c4e9;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .invoice .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .invoice .item-details div {
+            flex: 1;
+            text-align: center;
+        }
+
+        .invoice .item-details input[type="number"] {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .invoice li .delete-icon {
+            cursor: pointer;
+            color: red;
+        }
+
+        .invoice .total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffeb3b70;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .invoice .checkout {
+            display: flex;
+            justify-content: center;
+        }
+
+        .invoice .checkout button {
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+    <meta name="csrf-token" th:content="${_csrf.token}"/>
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar for categories -->
+    <div class="sidebar" id="sidebar">
+        <i class="fas fa-bars toggle-icon" onclick="toggleSidebar()"></i>
+        <h2>Loại sản phẩm</h2>
+        <ul>
+            <li onclick="showAllProducts()">Hiển thị lại tất cả</li>
+            <li th:each="loaiSP : ${loaisps}" th:text="${loaiSP.tenLoai}"
+                th:onclick="'window.location.href=\'/nhanvien?categoryId=' + ${loaiSP.maLoai} + '\''">
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main content area -->
+    <div class="content">
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Nhập thông tin sản phẩm hoặc mã sản phẩm cần tìm kiếm" oninput="searchProduct()">
+            <button onclick="searchProduct()">Tìm kiếm</button>
+        </div>
+
+        <!-- Product table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Mã sản phẩm</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Đơn vị tính</th>
+                    <th>Đơn giá</th>
+                </tr>
+                </thead>
+                <tbody id="product-list">
+                <tr th:each="sanPham : ${sanphams}" onclick="toggleSelect(this)">
+                    <td th:text="${sanPham.barcode}">Mã sản phẩm</td>
+                    <td th:text="${sanPham.tenSP}">Tên sản phẩm</td>
+                    <td th:text="${sanPham.donViTinh}">Đơn vị tính</td>
+                    <td class="currency" th:text="${sanPham.donGia}">Đơn giá</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Invoice area -->
+    <div class="invoice">
+        <h2>Hóa đơn</h2>
+        <ul id="invoice-list">
+            <!-- Invoice items will be dynamically added here -->
+        </ul>
+        <div class="total">
+            <span>Tổng cộng:</span>
+            <span id="total-amount">0</span>
+        </div>
+        <div class="checkout">
+            <button type="button" onclick="goToCheckout()">Thanh toán</button>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    let invoiceItems = JSON.parse(localStorage.getItem('invoiceItems')) || [];
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
+    function toggleSelect(row) {
+        const barcode = row.cells[0].innerText;
+        const itemName = row.cells[1].innerText;
+        const itemPrice = parseFloat(row.cells[3].innerText.replace(/[^\d.-]/g, '')).toFixed(0);
+
+        let item = invoiceItems.find(i => i.barcode === barcode);
+
+        if (item) {
+            item.quantity++;
+        } else {
+            invoiceItems.push({ barcode, itemName, itemPrice, quantity: 1 });
+        }
+
+        updateInvoice();
+    }
+
+    function updateQuantity(barcode, quantity) {
+        let item = invoiceItems.find(i => i.barcode === barcode);
+        if (item) {
+            item.quantity = parseInt(quantity);
+            updateInvoice();
+        }
+    }
+
+    function removeItem(barcode) {
+        invoiceItems = invoiceItems.filter(item => item.barcode !== barcode);
+        updateInvoice();
+    }
+
+    function updateInvoice() {
+        const invoiceList = document.getElementById('invoice-list');
+        const totalAmount = document.getElementById('total-amount');
+        let total = 0;
+
+        invoiceList.innerHTML = '';
+
+        invoiceItems.forEach(item => {
+            const itemTotalPrice = parseFloat(item.itemPrice) * item.quantity;
+            total += itemTotalPrice;
+
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <div class="item-details">
+                    <div>${item.itemName}</div>
+                    <div>
+                        <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity('${item.barcode}', this.value)">
+                    </div>
+                    <div>- Giá: ${itemTotalPrice.toLocaleString()}</div>
+                    <div><i class="fas fa-trash-alt delete-icon" onclick="removeItem('${item.barcode}')"></i></div>
+                </div>
+            `;
+            invoiceList.appendChild(listItem);
+        });
+
+        totalAmount.textContent = total.toLocaleString();
+        localStorage.setItem('invoiceItems', JSON.stringify(invoiceItems));
+    }
+
+    function showAllProducts() {
+        window.location.href = '/nhanvien';
+    }
+
+    function searchProduct() {
+        const query = document.getElementById('search-input').value.toLowerCase();
+        const rows = document.querySelectorAll('#product-list tr');
+
+        rows.forEach(row => {
+            const barcode = row.cells[0].innerText.toLowerCase();
+            const itemName = row.cells[1].innerText.toLowerCase();
+
+            if (barcode.includes(query) || itemName.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function goToCheckout() {
+        const totalAmount = parseFloat(document.getElementById('total-amount').textContent.replace(/[^\d.-]/g, ''));
+
+        if (totalAmount <= 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không có sản phẩm để thanh toán',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        const formData = new FormData();
+        invoiceItems.forEach((item, index) => {
+            const barcode = parseInt(item.barcode, 10);
+            const quantity = parseInt(item.quantity, 10);
+            const price = parseFloat(item.itemPrice);
+
+            if (!isNaN(barcode) && !isNaN(quantity) && !isNaN(price)) {
+                formData.append('barcodes', barcode);
+                formData.append('quantities', quantity);
+                formData.append('prices', price);
+            } else {
+                console.error('Invalid item data:', item);
+            }
+        });
+
+        console.log('FormData:', Array.from(formData.entries()));
+
+        fetch('/nhanvien/checkout', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            window.location.href = `/nhanvien/payment-method?invoiceId=${data.maHD}`;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại.',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const currencyElements = document.querySelectorAll(".currency");
+        currencyElements.forEach(function(element) {
+            const value = parseFloat(element.textContent.replace(/[^\d.-]/g, '')).toFixed(0);
+            if (!isNaN(value)) {
+                element.textContent = value.toLocaleString();
+            }
+        });
+
+        updateInvoice();
+    });
+</script>
+</body>
+</html>

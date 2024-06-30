@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layoutAdmin}">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết Loại sản phẩm</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+<section layout:fragment="content" class="container">
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Chi tiết loại sản phẩm</h1>
+
+        <div class="card mb-3">
+            <div class="card-header text-center">
+                Thông tin loại sản phẩm
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Mã loại sản phẩm: <span th:text="${LSP.maLoai}"></span></h5>
+                <p class="card-text">Tên loại sản phẩm: <span th:text="${LSP.tenLoai}"></span></p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header text-center">
+                Danh sách sản phẩm trong loại sản phẩm
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Mã</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Đơn vị</th>
+                        <th scope="col">Giá</th>
+                        <th scope="col">Nhà cung cấp</th>
+                        <th scope="col">Vị trí</th>
+                        <th scope="col">Loại</th>
+                        <th scope="col">Khuyến mãi</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Dữ liệu sản phẩm được thêm vào từ controller -->
+                    <tr th:each="sanpham : ${SPS}">
+                        <td th:text="${sanpham.barcode}"></td>
+                        <td th:text="${sanpham.tenSP}"></td>
+                        <td th:text="${sanpham.donViTinh}"></td>
+                        <td th:text="${sanpham.donGia}"></td>
+                        <td th:text="${sanpham.ncc != null ? sanpham.ncc.tenNCC : 'Không có dữ liệu'}"></td>
+                        <td th:text="${sanpham.vitri != null ? sanpham.vitri.tenViTri : 'Không có dữ liệu'}"></td>
+                        <td th:text="${sanpham.loaisp != null ? sanpham.loaisp.tenLoai : 'Không có dữ liệu'}"></td>
+                        <td>
+                            <span th:if="${sanpham.khuyenmai != null && sanpham.khuyenmai.hinhthuc != null}" th:text="${sanpham.khuyenmai.hinhthuc.tenHinhThuc}"></span>
+                            <span th:if="${sanpham.khuyenmai != null && sanpham.khuyenmai.hinhthuc == null}">Đang cập nhật</span>
+                            <span th:if="${sanpham.khuyenmai == null}">Không có</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Optional: Bootstrap JS và jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

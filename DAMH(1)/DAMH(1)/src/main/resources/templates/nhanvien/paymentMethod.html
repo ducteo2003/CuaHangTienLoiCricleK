@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Select Payment Method</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .payment-method-selection {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 400px;
+            text-align: center;
+            border: 1px solid #ddd;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .payment-method-selection h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .payment-method-selection p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .payment-method-selection .form-group {
+            margin-bottom: 20px;
+        }
+
+        .payment-method-selection .custom-radio input[type="radio"] {
+            display: none;
+        }
+
+        .payment-method-selection .custom-radio label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #495057;
+            display: block;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .payment-method-selection .custom-radio label:hover {
+            background-color: #f1f1f1;
+        }
+
+        .payment-method-selection .custom-radio label:before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #007bff;
+            background: #fff;
+        }
+
+        .payment-method-selection .custom-radio input[type="radio"]:checked + label:after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #007bff;
+        }
+
+        .payment-method-selection .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .payment-method-selection .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .payment-method-selection .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .payment-method-selection .btn-warning {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .payment-method-selection .btn-warning:hover {
+            background-color: #e0a800;
+            transform: scale(1.05);
+        }
+
+        #momoQRCode {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #momoQRCode img {
+            width: 180px;
+            height: 180px;
+        }
+
+        #momoQRCode button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #momoQRCode button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .modal-dialog {
+            max-width: 600px;
+        }
+
+        .modal-content {
+            padding: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: #343a40;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .btn-submit {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<div class="payment-method-selection">
+    <h2>Thanh toán hóa đơn</h2>
+    <div>
+        <p>Mã hóa đơn: <span th:text="${invoiceId}"></span></p>
+        <!--<p>Tên khách hàng: <span th:text="${customerName}"></span></p>-->
+        <p>Ngày đặt hàng: <span th:text="${#dates.format(orderDate, 'dd-MM-yyyy')}"></span></p>
+        <p>Tổng hóa đơn: <span id="totalAmount" th:text="${totalAmount}"></span> VND</p>
+    </div>
+    <p>Chọn loại thanh toán:</p>
+    <form action="/nhanvien/complete-payment" method="post" id="paymentForm">
+        <input type="hidden" name="invoiceId" th:value="${invoiceId}">
+        <div class="custom-radio">
+            <input type="radio" id="cash" name="paymentType" value="cash" checked>
+            <label for="cash">Thanh toán bằng tiền mặt</label>
+        </div>
+        <div class="custom-radio">
+            <input type="radio" id="momo" name="paymentType" value="momo">
+            <label for="momo">Thanh toán bằng MoMo</label>
+        </div>
+        <div class="custom-radio">
+            <input type="radio" id="vnpay" name="paymentType" value="vnpay">
+            <label for="vnpay">Thanh toán bằng VNPAY</label>
+        </div>
+        <button type="button" id="commentBtn" class="btn btn-warning mt-3" onclick="openCommentModal()">Bình luận</button>
+        <button type="button" class="btn btn-primary mt-3" onclick="processPayment()">Tiếp tục</button>
+    </form>
+    <div id="momoQRCode">
+        <h3>Quét mã QR MoMo để thanh toán</h3>
+        <img id="momoQRImage" src="" alt="MoMo QR Code">
+        <button type="button" class="btn btn-success mt-3" onclick="confirmMoMoPayment()">Xác nhận đã thanh toán</button>
+    </div>
+</div>
+<!-- Modal for Comment Form -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Nhập thông tin bình luận</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="commentForm" th:action="@{/nhanvien/comment}" method="post">
+                    <input type="hidden" name="invoiceId" th:value="${invoiceId}">
+                    <div class="form-group">
+                        <label for="commentContent">Nội dung bình luận:</label>
+                        <textarea class="form-control" id="commentContent" name="content" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Gửi bình luận</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN').format(amount);
+    }
+
+    function openCommentModal() {
+        $('#commentModal').modal('show'); // Mở modal bình luận
+    }
+    function processPayment() {
+        const paymentType = document.querySelector('input[name="paymentType"]:checked').value;
+        if (paymentType === 'vnpay') {
+            generateVNPayPaymentUrl();
+        } else if (paymentType === 'momo') {
+            generateMoMoPaymentUrl();
+        } else {
+            submitPaymentForm();
+        }
+    }
+    function generateMoMoPaymentUrl() {
+        const invoiceId = document.querySelector('input[name="invoiceId"]').value;
+        fetch(`/momo/pay?invoiceId=${invoiceId}`)
+            .then(response => response.text())
+            .then(paymentUrl => {
+                window.location.href = paymentUrl;
+            })
+            .catch(error => console.error('Error generating MoMo payment URL:', error));
+    }
+
+    function generateVNPayPaymentUrl() {
+        const totalAmount = parseFloat(document.getElementById('totalAmount').textContent.replace(/\D/g, ''));
+        fetch(`/nhanvien/generate-payment-url?totalAmount=${totalAmount}`)
+            .then(response => response.text())
+            .then(paymentUrl => {
+                window.location.href = paymentUrl;
+            })
+            .catch(error => console.error('Error generating VNPay payment URL:', error));
+    }
+
+    $('#commentForm').submit(function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Bình luận thành công!',
+                    text: response.message,
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = '/nhanvien';
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Đã có lỗi xảy ra. Vui lòng thử lại.'
+                });
+            }
+        });
+    });
+
+    function submitPaymentForm() {
+        const formData = new FormData(document.getElementById('paymentForm'));
+        fetch('/nhanvien/complete-payment', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Thanh toán thành công!',
+                text: data.message,
+                confirmButtonText: 'OK'
+            }).then(() => {
+                localStorage.removeItem('invoiceItems');
+                window.location.href = '/nhanvien';
+            });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const totalAmountElement = document.getElementById("totalAmount");
+        const totalAmount = parseFloat(totalAmountElement.textContent);
+        totalAmountElement.textContent = formatCurrency(totalAmount);
+    });
+</script>
+
+</body>
+</html>

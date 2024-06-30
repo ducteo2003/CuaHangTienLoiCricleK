@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layoutAdmin}">
+<head>
+  <title>Chi tiết bình luận</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Your custom styles here */
+  </style>
+</head>
+<body>
+<section layout:fragment="content">
+  <div class="container">
+    <h1 class="text-center">Chi tiết bình luận</h1>
+
+    <!-- Display BINHLUAN details -->
+    <div>
+      <h4>Nội dung bình luận:</h4>
+      <p th:text="${bl.noiDung}"></p>
+      <h4>Ngày bình luận:</h4>
+      <p th:text="${#dates.format(bl.ngayBinhLuan, 'dd/MM/yyyy HH:mm:ss')}"></p>
+      <h4>Trạng thái:</h4>
+      <p th:text="${bl.trangThai ? 'Đã duyệt' : 'Đợi duyệt'}"></p>
+    </div>
+
+    <!-- Display HOADON details -->
+    <div th:if="${hd != null}">
+      <h4>Thông tin hóa đơn:</h4>
+      <p>Mã hóa đơn: <span th:text="${hd.maHD}"></span></p>
+      <p>Tên khách hàng: <span th:text="${hd.tenKH}"></span></p>
+      <p>Ngày lập hóa đơn: <span th:text="${#dates.format(hd.ngayLap, 'dd/MM/yyyy HH:mm:ss')}"></span></p>
+      <p>Nhân viên lập hóa đơn: <span th:text="${hd.nhanvien != null ? hd.nhanvien.tenNV : 'Chưa có thông tin'}"></span></p>
+    </div>
+    <div th:if="${hd == null}">
+      <p>Không có thông tin hóa đơn liên quan đến bình luận này.</p>
+    </div>
+
+    <!-- Back button -->
+    <a href="/binhluan" class="btn btn-primary">Quay lại danh sách bình luận</a>
+    <form id="editForm" th:action="@{/binhluan/edit/{id}(id=${bl.maBinhLuan})}" method="post">
+      <input type="hidden" name="_method" value="post"/>
+      <button type="submit" class="btn btn-info btn-sm btn-custom">
+        <i class="fas fa-info-circle"></i> Duyệt
+      </button>
+    </form>
+
+  </div>
+</section>
+
+<!-- Bootstrap JS (Optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

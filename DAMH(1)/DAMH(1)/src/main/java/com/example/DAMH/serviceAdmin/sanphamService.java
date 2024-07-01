@@ -30,13 +30,12 @@ public class sanphamService {
     public void AddSappham(SANPHAM sp)
     {
         int maLoai = sp.getLoaisp().getMaLoai();
-        int maKM = sp.getKhuyenmai().getMaKM();
-        Optional<SANPHAM>  sanpham = SPRepository.findSanpham(sp.getTenSP(),maLoai,maKM);
+        int maKM = sp.getKhuyenmai() != null ? sp.getKhuyenmai().getMaKM() : 0; // kiểm tra null cho mã khuyến mãi
+        Optional<SANPHAM> sanpham = SPRepository.findSanpham(sp.getTenSP(), maLoai, maKM);
 
-        if(sanpham.isEmpty())//nếu chưa tồn tại sp nào có thông tin tương tự trong data thì thêm mới ngược lại thì update
-        {
+        if (sanpham.isEmpty()) { // nếu chưa tồn tại sản phẩm nào có thông tin tương tự trong database thì thêm mới
             SPRepository.save(sp);
-        }else{
+        } else {
             UpdateSanpham(sp);
         }
     }

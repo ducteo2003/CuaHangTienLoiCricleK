@@ -363,74 +363,81 @@
         });
     }
 
-    function goToCheckout() {
-        const totalAmount = parseFloat(document.getElementById('total-amount').textContent.replace(/[^\d.-]/g, ''));
+   function goToCheckout() {
+    const totalAmount = parseFloat(document.getElementById('total-amount').textContent.replace(/[^\d.-]/g, ''));
 
-        if (totalAmount <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: 'Không có sản phẩm để thanh toán',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
-
-        const formData = new FormData();
-        invoiceItems.forEach((item, index) => {
-            const barcode = parseInt(item.barcode, 10);
-            const quantity = parseInt(item.quantity, 10);
-            const price = parseFloat(item.itemPrice);
-
-            if (!isNaN(barcode) && !isNaN(quantity) && !isNaN(price)) {
-                formData.append('barcodes', barcode);
-                formData.append('quantities', quantity);
-                formData.append('prices', price);
-            } else {
-                console.error('Invalid item data:', item);
-            }
+    if (totalAmount <= 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Không có sản phẩm để thanh toán',
+            confirmButtonText: 'OK'
         });
-
-        console.log('FormData:', Array.from(formData.entries()));
-
-        fetch('/nhanvien/checkout', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            window.location.href = `/nhanvien/payment-method?invoiceId=${data.maHD}`;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                text: 'Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại.',
-                confirmButtonText: 'OK'
-            });
-        });
+        return;
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        const currencyElements = document.querySelectorAll(".currency");
-        currencyElements.forEach(function(element) {
-            const value = parseFloat(element.textContent.replace(/[^\d.-]/g, '')).toFixed(0);
-            if (!isNaN(value)) {
-                element.textContent = value.toLocaleString();
-            }
-        });
+    const formData = new FormData();
+    invoiceItems.forEach((item) => {
+        const barcode = parseInt(item.barcode, 10);
+        const quantity = parseInt(item.quantity, 10);
+        const price = parseFloat(item.itemPrice);
 
-        updateInvoice();
+        if (!isNaN(barcode) && !isNaN(quantity) && !isNaN(price)) {
+            formData.append('barcodes', barcode);
+            formData.append('quantities', quantity);
+            formData.append('prices', price);
+        } else {
+            console.error('Invalid item data:', item);
+        }
     });
+
+    console.log('FormData:', Array.from(formData.entries()));
+
+    fetch('/nhanvien/checkout', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.maHD) {
+            window.location.href = `/nhanvien/payment-method?invoiceId=${data.maHD}`;
+        } else {
+            throw new Error('Invalid response data');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi',
+            text: 'Đã xảy ra lỗi trong quá trình thanh toán. Vui lòng thử lại.',
+            confirmButtonText: 'OK'
+        });
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const currencyElements = document.querySelectorAll(".currency");
+    currencyElements.forEach(function(element) {
+        const value = parseFloat(element.textContent.replace(/[^\d.-]/g, '')).toFixed(0);
+        if (!isNaN(value)) {
+            element.textContent = value.toLocaleString();
+        }
+    });
+
+    updateInvoice();
+});
+
+
 </script>
 </body>
 </html>

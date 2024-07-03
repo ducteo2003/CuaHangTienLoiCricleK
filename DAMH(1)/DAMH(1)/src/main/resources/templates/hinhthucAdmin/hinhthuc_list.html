@@ -1,144 +1,113 @@
-<!--
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách hình thức khuyến mãi</title>
-    &lt;!&ndash; Bootstrap CSS &ndash;&gt;
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    &lt;!&ndash; Font Awesome CSS &ndash;&gt;
+    <title layout:title="Page Title">My Application</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .header a {
+            color: white;
+            margin-right: 15px;
+        }
+        .header a:hover {
+            color: #ccc;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .container-custom {
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .navbar-custom {
+            background-color: #007bff;
+            padding: 10px;
+        }
+        .navbar-custom .nav-link {
+            color: white;
+            margin-right: 10px;
+        }
+        .navbar-custom .nav-link:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+        .navbar-nav {
+            flex-direction: row;
+        }
+        .navbar-nav .nav-item {
+            margin-right: 15px;
+        }
+        .ml-auto {
+            margin-left: auto;
+        }
+        .header-icons a {
+            color: white;
+            margin: 0 5px;
+        }
+        .header-icons a:hover {
+            color: #ccc;
+        }
+    </style>
 </head>
 <body>
-<section class="container mt-5">
-    <h1 class="text-center mb-4">Danh sách hình thức khuyến mãi</h1>
-    <table class="table table-striped table-bordered">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">Mã</th>
-            <th scope="col">Tên hình thức</th>
-            <th scope="col">Thao tác</th>
-        </tr>
-        </thead>
-        <tbody>
-        &lt;!&ndash; Duyệt danh sách hình thức khuyến mãi &ndash;&gt;
-        <tr th:each="ht : ${ht}">
-            <td th:text="${ht.maHinhThuc}"></td>
-            <td th:text="${ht.tenHinhThuc}"></td>
-            <td>
-                <a th:href="@{/hinhthuc/delete/{maHinhThuc}(maHinhThuc=${ht.maHinhThuc})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc không?')">
-                    <i class="fas fa-trash-alt"></i> Xóa
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i>
-        Thêm mới
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <a class="navbar-brand" href="#">
+        <!-- Thêm logo của bạn ở đây -->
+        <img src="/images/Circle_K.png" alt="Logo" style="height: 40px;">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
     </button>
-</section>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Thêm hình thức mới</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addForm" th:action="@{/hinhthuc/add}" method="post">
-                    <div class="form-group">
-                        <label for="noidung"><i class="fas fa-pen"></i> Nội dung</label>
-                        <input type="text" id="noidung" name="noidung" class="form-control" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                <button type="submit" form="addForm" class="btn btn-primary">Lưu</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-&lt;!&ndash; Optional: Bootstrap JS và jQuery &ndash;&gt;
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
--->
-<!--sử dụng được cửa sổ nhỏ ghi đè lên layout-->
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security5"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<head>
-    <meta charset="UTF-8">
-    <meta charset="UTF-8">
-    <title>Danh sách hình thức khuyến mãi</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand text-white" href="/products">Trang quản trị</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                <li class="nav-item">
-                    <a th:href="@{/nhanvienAdmin}" class="nav-link text-white">Nhân viên</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/sanphamAdmin}" class="nav-link text-white">Sản phẩm</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/NCC}" class="nav-link text-white">Nhà cung cấp</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/khuyenmai}" class="nav-link text-white">Khuyến mãi</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/hinhthuc}" class="nav-link text-white">Hình thức khuyến mãi</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/loaisanpham}" class="nav-link text-white">Loại sản phầm</a>
-                </li>
-                <li class="nav-item">
-                    <a th:href="@{/binhluan}" class="nav-link text-white">Bình luận</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                <li class="nav-item d-flex align-items-center"
-                    sec:authorize="isAuthenticated()">
-                    <span class="navbar-text text-white">
-                    Xin chào, <span sec:authentication="name" style="margin
-                    right: 20px;"></span>
-                    </span>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post">
-                        <button class="btn btn-outline-light"
-                                type="submit">Logout</button>
-                    </form>
-                </li>
-                <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="btn btn-outline-light" href="/">Login</a>
-                </li>
-            </ul>
-        </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" th:href="@{/thongkeTuan}"><i class="fas fa-tachometer-alt"></i> Tổng quan</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/product/list}" ><i class="fas fa-box"></i> Hàng hóa</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/nhanvienAdmin}" ><i class="fas fa-users"></i> Nhân viên</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/sanphamAdmin}" ><i class="fas fa-cubes"></i> Sản phẩm</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-warehouse"></i> Quản lý
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" th:href="@{/NCC}"><i class="fas fa-truck"></i> Nhà Cung Cấp</a>
+                    <a class="dropdown-item" th:href="@{/khuyenmai}"><i class="fas fa-tags"></i> Khuyến mãi</a>
+                    <a class="dropdown-item" th:href="@{/hinhthuc}"><i class="fas fa-handshake"></i> Hình thức khuyến mãi</a>
+                    <a class="dropdown-item" th:href="@{/loaisanpham}"><i class="fas fa-boxes"></i> Loại sản phẩm</a>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/binhluan}"><i class="fas fa-comments"></i> Bình luận</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/chitietdathang}"><i class="fas fa-chart-line"></i> Báo cáo</a>
+            </li>
+        </ul>
+        <a class="btn btn-warning ml-auto" th:href="@{/nhanvien}"><i class="fas fa-shopping-cart"></i> Bán hàng</a>
     </div>
 </nav>
 <div class="container mt-5">
@@ -194,8 +163,12 @@
 <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init();
+</script>
 </body>
 </html>

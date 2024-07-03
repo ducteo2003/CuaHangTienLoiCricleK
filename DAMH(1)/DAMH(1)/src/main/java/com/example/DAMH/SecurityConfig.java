@@ -41,11 +41,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/register", "/error",
-                                "/products", "/cart", "/cart/**")
-                        .permitAll()
-                        .requestMatchers("/products/edit/**", "/products/add", "/products/delete")
-                        .hasAnyAuthority("ADMIN")
+//                        .requestMatchers("/css/**", "/js/**", "/", "/oauth/**", "/register", "/error",
+//                                "/products", "/cart", "/cart/**").permitAll()
+//                        .requestMatchers("/products/edit/**", "/products/add", "/products/delete")
+//                        .hasAnyAuthority("ADMIN")
+                        .requestMatchers("/binhluan/**").hasAuthority("ADMIN")
+                        .requestMatchers("/hinhthuc/**").hasAuthority("ADMIN")
+                        .requestMatchers("/khuyenmai/**").hasAuthority("ADMIN")
+                        .requestMatchers("/loaisanpham/**").hasAuthority("ADMIN")
+                        .requestMatchers("/NCC/**").hasAuthority("ADMIN")
+                        .requestMatchers("/nhanvienAdmin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/sanphamAdmin/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -60,7 +66,7 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/nhanvien")
+                        .defaultSuccessUrl("/thongkeTuan")
                         .failureUrl("/login?error")
                         .permitAll()
                 )

@@ -41,9 +41,9 @@ public class InvoiceController {
     @PostMapping("/checkout")
     @Transactional
     @ResponseBody
-    public HOADON checkout(@RequestParam("barcodes") List<Integer> barcodes,
-                           @RequestParam("quantities") List<Integer> quantities,
-                           @RequestParam("prices") List<Double> prices) {
+    public Map<String, Object> checkout(@RequestParam("barcodes") List<Integer> barcodes,
+                                        @RequestParam("quantities") List<Integer> quantities,
+                                        @RequestParam("prices") List<Double> prices) {
         if (barcodes.size() != quantities.size() || barcodes.size() != prices.size()) {
             throw new IllegalArgumentException("Mismatched input list sizes.");
         }
@@ -54,7 +54,9 @@ public class InvoiceController {
         }
         NHANVIEN nhanvien = getCurrentNhanVien();
         HOADON hoadon = hoadonService.createInvoice(barcodes, quantities, prices, nhanvien);
-        return hoadon;
+        Map<String, Object> response = new HashMap<>();
+        response.put("maHD", hoadon.getMaHD());
+        return response;
     }
 
 

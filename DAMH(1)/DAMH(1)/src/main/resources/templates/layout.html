@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security5"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title layout:title="Page Title">My Application</title>
@@ -70,7 +72,7 @@
 <nav class="navbar navbar-expand-lg navbar-custom">
     <a class="navbar-brand" href="#">
         <!-- Thêm logo của bạn ở đây -->
-        <img src="logo.png" alt="Logo" style="height: 40px;">
+<!--        <img src="/images/Circle_K.png" alt="Logo" style="height: 40px;">-->
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -80,26 +82,40 @@
             <li class="nav-item">
                 <a class="nav-link active" th:href="@{/thongkeTuan}"><i class="fas fa-tachometer-alt"></i> Tổng quan</a>
             </li>
-            <li class="nav-item">
+            <li sec:authorize="hasAnyAuthority('MANAGER','ADMIN')" class="nav-item">
                 <a class="nav-link" th:href="@{/product/list}" ><i class="fas fa-box"></i> Hàng hóa</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-exchange-alt"></i> Giao dịch</a>
+            <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
+                <a class="nav-link" th:href="@{/nhanvienAdmin}" ><i class="fas fa-users"></i> Nhân viên</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-handshake"></i> Đối tác</a>
+            <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
+                <a class="nav-link" th:href="@{/sanphamAdmin}" ><i class="fas fa-cubes"></i> Sản phẩm</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-wallet"></i> Sổ quỹ</a>
+            <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-warehouse"></i> Quản lý
+                </a>
+                <div  class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" th:href="@{/NCC}"><i class="fas fa-truck"></i> Nhà Cung Cấp</a>
+                    <a class="dropdown-item" th:href="@{/khuyenmai}"><i class="fas fa-tags"></i> Khuyến mãi</a>
+                    <a class="dropdown-item" th:href="@{/hinhthuc}"><i class="fas fa-handshake"></i> Hình thức khuyến mãi</a>
+                    <a class="dropdown-item" th:href="@{/loaisanpham}"><i class="fas fa-boxes"></i> Loại sản phẩm</a>
+                </div>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fas fa-phone"></i> Liên hệ</a>
+            <li sec:authorize="hasAnyAuthority('ADMIN')" class="nav-item">
+                <a class="nav-link" th:href="@{/binhluan}"><i class="fas fa-comments"></i> Bình luận</a>
             </li>
-            <li class="nav-item">
+            <li sec:authorize="hasAnyAuthority('MANAGER','ADMIN')"  class="nav-item">
                 <a class="nav-link" th:href="@{/chitietdathang}"><i class="fas fa-chart-line"></i> Báo cáo</a>
             </li>
+            <li class="nav-item" sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-outline-light"
+                            type="submit">Logout</button>
+                </form>
+            </li>
         </ul>
-        <button class="btn btn-warning ml-auto"><i class="fas fa-shopping-cart"></i> Bán hàng</button>
+        <a sec:authorize="hasAnyAuthority('EMPLOYEE','ADMIN')" class="btn btn-warning ml-auto" th:href="@{/nhanvien}"><i class="fas fa-shopping-cart"></i> Bán hàng</a>
     </div>
 </nav>
 

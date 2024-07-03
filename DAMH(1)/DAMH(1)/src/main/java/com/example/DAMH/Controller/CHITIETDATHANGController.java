@@ -50,8 +50,9 @@ public class CHITIETDATHANGController {
             cell.setCellValue(columns[i]);
         }
 
-        // Tạo các hàng dữ liệu
+        // Tạo các hàng dữ liệu và tính tổng tiền
         int rowNum = 1;
+        double totalAmount = 0.0;
         for (CHITIETDATHANG chitiet : chitietdathangList) {
             Row row = sheet.createRow(rowNum++);
 
@@ -63,7 +64,16 @@ public class CHITIETDATHANGController {
             row.createCell(5).setCellValue(chitiet.getTongDat());
             row.createCell(6).setCellValue(chitiet.getSanpham().getBarcode());
             row.createCell(7).setCellValue(chitiet.getDondathang().getMaDon());
+
+            totalAmount += chitiet.getTongDat();
         }
+
+        // Thêm hàng hiển thị tổng tiền
+        Row totalRow = sheet.createRow(rowNum);
+        Cell totalLabelCell = totalRow.createCell(4);
+        totalLabelCell.setCellValue("Tổng Tiền");
+        Cell totalAmountCell = totalRow.createCell(5);
+        totalAmountCell.setCellValue(totalAmount);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         workbook.write(baos);

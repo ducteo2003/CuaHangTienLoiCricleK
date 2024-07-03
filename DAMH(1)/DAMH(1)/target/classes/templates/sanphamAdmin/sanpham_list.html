@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layoutAdmin}">
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <title>Danh sách sản phẩm</title>
@@ -10,6 +10,9 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
         .table thead th {
             vertical-align: middle;
         }
@@ -27,6 +30,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-bottom: 20px;
         }
         .search-input {
             flex: 1;
@@ -36,65 +40,75 @@
             display: flex;
             align-items: center;
         }
+        .table-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-add {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 <section layout:fragment="content">
     <div class="container mt-5">
         <h1 class="text-center mb-4">Danh sách sản phẩm</h1>
-        <form th:action="@{/sanphamAdmin/search}" method="get" class="form-inline mb-3 search-form">
+        <form th:action="@{/sanphamAdmin/search}" method="get" class="form-inline search-form">
             <input type="text" name="text" class="form-control search-input" placeholder="Tìm kiếm tên sản phẩm/mã sản phẩm...">
             <button type="submit" class="btn btn-primary search-button">
                 <i class="fas fa-search"></i>
             </button>
         </form>
-        <table class="table table-striped table-bordered table-hover">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">Mã</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Đơn vị</th>
-                <th scope="col">Giá</th>
-                <th scope="col">Nhà cung cấp</th>
-                <th scope="col">Vị trí</th>
-                <th scope="col">Loại</th>
-                <th scope="col">Khuyến mãi</th>
-                <th scope="col">Thao tác</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Dữ liệu sản phẩm được thêm vào từ controller -->
-            <tr th:each="sanpham : ${sanphams}">
-                <td th:text="${sanpham.barcode}"></td>
-                <td th:text="${sanpham.tenSP}"></td>
-                <td th:text="${sanpham.donViTinh}"></td>
-                <td th:text="${sanpham.donGia}"></td>
-                <td th:text="${sanpham.ncc != null ? sanpham.ncc.tenNCC : 'Không có dữ liệu'}"></td>
-                <td th:text="${sanpham.vitri != null ? sanpham.vitri.tenViTri : 'Không có dữ liệu'}"></td>
-                <td th:text="${sanpham.loaisp != null ? sanpham.loaisp.tenLoai : 'Đang cập nhật'}"></td>
-                <td>
-                    <span th:if="${sanpham.khuyenmai != null && sanpham.khuyenmai.hinhthuc != null}" th:text="${sanpham.khuyenmai.hinhthuc.tenHinhThuc}"></span>
-                    <span th:if="${sanpham.khuyenmai != null && sanpham.khuyenmai.hinhthuc == null}">Đang cập nhật</span>
-                    <span th:if="${sanpham.khuyenmai == null}">Không có</span>
-                </td>
-
-                <td>
-                    <a th:href="@{/sanphamAdmin/edit/{id}(id=${sanpham.barcode})}"
-                       class="btn btn-primary btn-sm btn-custom" data-toggle="tooltip" data-placement="top" title="Sửa sản phẩm">
-                        <i class="fas fa-edit"></i> Sửa
-                    </a>
-                    <a th:href="@{/sanphamAdmin/delete/{id}(id=${sanpham.barcode})}"
-                       class="btn btn-danger btn-sm btn-custom" onclick="return confirm('Bạn có chắc không?')"
-                       data-toggle="tooltip" data-placement="top" title="Xóa sản phẩm">
-                        <i class="fas fa-trash-alt"></i> Xóa
-                    </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <a th:href="@{/sanphamAdmin/add}" class="btn btn-success btn-sm">
-            <i class="fas fa-plus-circle"></i> Thêm mới sản phẩm
-        </a>
+        <div class="table-container">
+            <a th:href="@{/sanphamAdmin/add}" class="btn btn-success btn-sm btn-add">
+                <i class="fas fa-plus-circle"></i> Thêm mới sản phẩm
+            </a>
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Mã</th>
+                    <th scope="col">Tên</th>
+                    <th scope="col">Đơn vị</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Nhà cung cấp</th>
+                    <th scope="col">Vị trí</th>
+                    <th scope="col">Loại</th>
+                    <th scope="col">Khuyến mãi</th>
+                    <th scope="col">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Dữ liệu sản phẩm được thêm vào từ controller -->
+                <tr th:each="sanpham : ${sanphams}">
+                    <td th:text="${sanpham.barcode}"></td>
+                    <td th:text="${sanpham.tenSP}"></td>
+                    <td th:text="${sanpham.donViTinh}"></td>
+                    <td th:text="${sanpham.donGia}"></td>
+                    <td th:text="${sanpham.ncc != null ? sanpham.ncc.tenNCC : 'Không có dữ liệu'}"></td>
+                    <td th:text="${sanpham.vitri != null ? sanpham.vitri.tenViTri : 'Không có dữ liệu'}"></td>
+                    <td th:text="${sanpham.loaisp != null ? sanpham.loaisp.tenLoai : 'Đang cập nhật'}"></td>
+                    <td>
+                        <span th:if="${sanpham.khuyenmai != null && sanpham.khuyenmai.hinhthuc != null}" th:text="${sanpham.khuyenmai.hinhthuc.tenHinhThuc}"></span>
+                        <span th:if="${sanpham.khuyenmai != null && sanpham.khuyenmai.hinhthuc == null}">Đang cập nhật</span>
+                        <span th:if="${sanpham.khuyenmai == null}">Không có</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/sanphamAdmin/edit/{id}(id=${sanpham.barcode})}"
+                           class="btn btn-primary btn-sm btn-custom" data-toggle="tooltip" data-placement="top" title="Sửa sản phẩm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a th:href="@{/sanphamAdmin/delete/{id}(id=${sanpham.barcode})}"
+                           class="btn btn-danger btn-sm btn-custom" onclick="return confirm('Bạn có chắc không?')"
+                           data-toggle="tooltip" data-placement="top" title="Xóa sản phẩm">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 <!-- Bootstrap JS và jQuery -->

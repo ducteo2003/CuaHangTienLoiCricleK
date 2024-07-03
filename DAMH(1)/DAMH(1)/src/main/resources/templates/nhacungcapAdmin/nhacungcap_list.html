@@ -19,26 +19,11 @@
             display: flex;
             margin-top: 20px;
         }
-        .sidebar {
-            flex: 0 0 250px;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-right: 20px;
-        }
         .supplier-list {
             flex: 1;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .sidebar h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-        .sidebar input[type="text"] {
-            margin-bottom: 10px;
-            width: 100%;
         }
         .supplier-header {
             display: flex;
@@ -54,12 +39,26 @@
             max-height: 500px;
             overflow-y: auto;
         }
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 1rem;
+            background-color: transparent;
+        }
         .table th, .table td {
             text-align: center;
             vertical-align: middle;
         }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .table tbody + tbody {
+            border-top: 2px solid #dee2e6;
+        }
         .btn-custom {
-            width: 90px;
+            width: 110px;
+            margin: 2px;
         }
         .btn-add {
             margin-bottom: 20px;
@@ -80,12 +79,6 @@
 <body>
 <section layout:fragment="content">
     <div class="container-custom">
-        <div class="sidebar" data-aos="fade-right">
-            <div class="search">
-                <h3>Tìm kiếm</h3>
-                <input type="text" id="searchName" placeholder="Theo tên nhà cung cấp" onkeyup="filterSuppliers()">
-            </div>
-        </div>
         <div class="supplier-list" data-aos="fade-left">
             <div class="supplier-header">
                 <h1>Danh sách nhà cung cấp</h1>
